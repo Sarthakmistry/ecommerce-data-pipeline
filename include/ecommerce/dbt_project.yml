@@ -32,5 +32,13 @@ clean-targets:         # directories to be removed by `dbt clean`
 models:
   ecommerce:
     # Config indicated by + and applies to all files under models/example/
-    example:
+    staging:
+      +schema: STAGING
       +materialized: view
+    vault:
+      +schema: VAULT
+      +materialized: incremental
+      +unique_key: hash_key
+    marts:
+      +schema: MARTS
+      +materialized: table
