@@ -1,0 +1,52 @@
+name: CI Pipeline
+
+on:
+  pull_request:
+    branches: [main]
+
+jobs:
+  ci:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Astro CLI
+        run: curl -sSL install.astronomer.io | sudo bash -s
+
+      - name: Parse & Validate DAGs
+        run: astro dev parse
+        # Fails if any DAG has import errors or cycles
+
+      - name: Run DAG Unit Tests
+        run: astro dev pytest tests/dags/
+        # Tests that DAG IDs are unique, tasks are valid, etc.
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dbt
+        run: pip install dbt-snowflake
+
+      - name: dbt compile
+        env:
+          SNOWFLAKE_ACCOUNT: ${{ secrets.SNOWFLAKE_ACCOUNT }}
+          SNOWFLAKE_USER: ${{ secrets.SNOWFLAKE_USER }}
+          SNOWFLAKE_PASSWORD: ${{ secrets.SNOWFLAKE_PASSWORD }}
+        run: |
+          cd include/ecommerce
+          dbt compile --target dev
+        # Validates all SQL without running it
+
+      - name: dbt Slim CI (only changed models)
+        env:
+          SNOWFLAKE_ACCOUNT: ${{ secrets.SNOWFLAKE_ACCOUNT }}
+          SNOWFLAKE_USER: ${{ secrets.SNOWFLAKE_USER }}
+          SNOWFLAKE_PASSWORD: ${{ secrets.SNOWFLAKE_PASSWORD }}
+        run: |
+          cd include/ecommerce
+          dbt run --target dev --select state:modified+ \
+               --defer --state ./target
+          dbt test --target dev --select state:modified+
