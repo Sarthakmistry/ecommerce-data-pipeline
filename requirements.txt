@@ -6,5 +6,7 @@ snowflake-sqlalchemy==1.6.1
 faker==24.0.0
 pandas==2.2.0
 requests==2.31.0
-great_expectations==0.18.15
+great_expectations
 python-dotenv==0.21.0
+snowflake-sqlalchemy==1.6.1
+sqlalchemy==1.4.52
