@@ -1,0 +1,12 @@
+version: 2
+
+sources:
+  - name: raw
+    database: ECOMMERCE
+    schema: RAW
+    tables:
+      - name: RAW_PRODUCTS
+      - name: RAW_CUSTOMERS
+      - name: RAW_ORDERS
+      - name: RAW_RETURNS
+      - name: RAW_INVENTORY
