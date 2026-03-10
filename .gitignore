@@ -12,4 +12,4 @@ airflow.db
 .env
 include/dbt/target/
 include/dbt/dbt_packages/
-include/ecommerce/profiles.yml
+include/ecommerce/profiles.ymlinclude/great_expectations/uncommitted/

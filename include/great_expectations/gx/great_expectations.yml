@@ -1,4 +1,3 @@
-
 # Welcome to Great Expectations! Always know what to expect from your data.
 #
 # Here you can define datasources, batch kwargs generators, integrations and
@@ -9,7 +8,7 @@
 
 # config_version refers to the syntactic version of this config file, and is used in maintaining backwards compatibility
 # It is auto-generated and usually does not need to be changed.
-config_version: 4
+config_version: 4.0
 
 # This config file supports variable substitution which enables: 1) keeping
 # secrets out of source control & 2) environment-based configuration changes
@@ -75,10 +74,65 @@ data_docs_sites:
   # profiles from the uncommitted directory. Read more at https://docs.greatexpectations.io/docs/terms/data_docs
   local_site:
     class_name: SiteBuilder
-    # set to false to hide how-to buttons in Data Docs
     show_how_to_buttons: true
     store_backend:
-        class_name: TupleFilesystemStoreBackend
-        base_directory: uncommitted/data_docs/local_site/
+      class_name: TupleFilesystemStoreBackend
+      base_directory: uncommitted/data_docs/local_site/
     site_index_builder:
-        class_name: DefaultSiteIndexBuilder
+      class_name: DefaultSiteIndexBuilder
+
+  github_site:
+    class_name: SiteBuilder
+    store_backend:
+      class_name: TupleFilesystemStoreBackend
+      base_directory: ../../../../../docs/data_docs/
+    site_index_builder:
+      class_name: DefaultSiteIndexBuilder
+fluent_datasources:
+  snowflake_staging:
+    type: snowflake
+    id: 9542f663-94df-4695-baab-1dc59d5395cb
+    assets:
+      stg_products:
+        type: table
+        id: 5d4f53ad-2498-4026-ab27-53ab29be661d
+        batch_metadata: {}
+        batch_definitions:
+          full_table:
+            id: 089a187d-4c33-499a-9449-d4257427fc68
+            partitioner:
+        table_name: STG_PRODUCTS
+        schema_name: STAGING
+      stg_customers:
+        type: table
+        id: d84ca9b9-5efc-4c21-9b85-4045b458db9b
+        batch_metadata: {}
+        batch_definitions:
+          full_table:
+            id: 2593c9e0-8154-4e35-90c1-1eaa32837d58
+            partitioner:
+        table_name: STG_CUSTOMERS
+        schema_name: STAGING
+      stg_orders:
+        type: table
+        id: 5edea84d-5c65-46d1-be7c-cc727b3e5635
+        batch_metadata: {}
+        batch_definitions:
+          full_table:
+            id: 4020ee16-3c74-4ba6-81f3-0a49d5e1dfef
+            partitioner:
+        table_name: STG_ORDERS
+        schema_name: STAGING
+      stg_returns:
+        type: table
+        id: 191c76a9-d38a-4288-adfa-08aef4b19b04
+        batch_metadata: {}
+        batch_definitions:
+          full_table:
+            id: c457f32c-3bb0-4497-af46-4e11d5d54082
+            partitioner:
+        table_name: STG_RETURNS
+        schema_name: STAGING
+    connection_string: snowflake://PIPELINE_USER:nike%40123@CVOHIOR-OY32875/ECOMMERCE/STAGING?warehouse=ECOMM_WH&role=PIPELINE_ROLE
+analytics_enabled:
+data_context_id: e99cefd3-7aa1-47f5-99c2-560692f0c6f9

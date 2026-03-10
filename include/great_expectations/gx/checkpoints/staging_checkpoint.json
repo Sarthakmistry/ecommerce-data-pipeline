@@ -1,0 +1,24 @@
+{
+  "actions": [],
+  "id": "b8ff8801-fb48-4d97-93ee-218c7ef2cc9f",
+  "name": "staging_checkpoint",
+  "result_format": "SUMMARY",
+  "validation_definitions": [
+    {
+      "id": "1652f175-95b3-4623-9f0f-e966421be107",
+      "name": "stg_products_validation"
+    },
+    {
+      "id": "9aaba9ad-cafa-46c6-8dc4-00839fcc8bbe",
+      "name": "stg_customers_validation"
+    },
+    {
+      "id": "174cec20-7cd9-4354-a04d-f41d5bf991a9",
+      "name": "stg_orders_validation"
+    },
+    {
+      "id": "83bb5576-912c-43cc-a7fc-f0ad112f3a77",
+      "name": "stg_returns_validation"
+    }
+  ]
+}

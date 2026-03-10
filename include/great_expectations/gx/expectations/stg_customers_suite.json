@@ -1,0 +1,56 @@
+{
+  "expectations": [
+    {
+      "id": "0a177ec1-a0dc-4417-b4f5-e71f8b923b08",
+      "kwargs": {
+        "column": "CUSTOMER_ID"
+      },
+      "meta": {},
+      "severity": "critical",
+      "type": "expect_column_to_exist"
+    },
+    {
+      "id": "739283bd-7789-4b24-ad52-be637f26149a",
+      "kwargs": {
+        "column": "CUSTOMER_ID"
+      },
+      "meta": {},
+      "severity": "critical",
+      "type": "expect_column_values_to_not_be_null"
+    },
+    {
+      "id": "76f2dd33-bc22-49cb-84e3-cac12f2edbfe",
+      "kwargs": {
+        "column": "CUSTOMER_ID"
+      },
+      "meta": {},
+      "severity": "critical",
+      "type": "expect_column_values_to_be_unique"
+    },
+    {
+      "id": "3f26a525-f674-4cbb-9e90-c39ce54dd666",
+      "kwargs": {
+        "column": "EMAIL"
+      },
+      "meta": {},
+      "severity": "critical",
+      "type": "expect_column_values_to_not_be_null"
+    },
+    {
+      "id": "cd65982a-e09d-4127-9545-9aaf0e3ec891",
+      "kwargs": {
+        "column": "EMAIL",
+        "regex": "^[^@]+@[^@]+\\.[^@]+$"
+      },
+      "meta": {},
+      "severity": "critical",
+      "type": "expect_column_values_to_match_regex"
+    }
+  ],
+  "id": "19751710-3545-42dd-a64e-1cd9ba43ecda",
+  "meta": {
+    "great_expectations_version": "1.14.0"
+  },
+  "name": "stg_customers_suite",
+  "notes": null
+}

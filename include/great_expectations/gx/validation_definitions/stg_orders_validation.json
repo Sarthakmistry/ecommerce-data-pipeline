@@ -1,0 +1,22 @@
+{
+  "data": {
+    "asset": {
+      "id": "4020a3d2-5453-42f3-859e-322a42e0c191",
+      "name": "stg_orders"
+    },
+    "batch_definition": {
+      "id": "1db4146d-39d6-490b-b66e-df9086e0f9eb",
+      "name": "full_table"
+    },
+    "datasource": {
+      "id": "9542f663-94df-4695-baab-1dc59d5395cb",
+      "name": "snowflake_staging"
+    }
+  },
+  "id": "174cec20-7cd9-4354-a04d-f41d5bf991a9",
+  "name": "stg_orders_validation",
+  "suite": {
+    "id": "fc6e5d78-e1af-448d-b0e1-202072ab85c7",
+    "name": "stg_orders_suite"
+  }
+}

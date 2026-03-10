@@ -1,0 +1,22 @@
+{
+  "data": {
+    "asset": {
+      "id": "c15b9ed1-0097-4a6a-84e1-99edc44a90ba",
+      "name": "stg_customers"
+    },
+    "batch_definition": {
+      "id": "e0de935e-eeed-4e4a-b533-b8ac98b13baf",
+      "name": "full_table"
+    },
+    "datasource": {
+      "id": "9542f663-94df-4695-baab-1dc59d5395cb",
+      "name": "snowflake_staging"
+    }
+  },
+  "id": "9aaba9ad-cafa-46c6-8dc4-00839fcc8bbe",
+  "name": "stg_customers_validation",
+  "suite": {
+    "id": "19751710-3545-42dd-a64e-1cd9ba43ecda",
+    "name": "stg_customers_suite"
+  }
+}

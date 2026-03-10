@@ -1,0 +1,72 @@
+{
+  "expectations": [
+    {
+      "id": "3587aade-5ba1-423f-8739-73a3d5396d1b",
+      "kwargs": {
+        "column": "ORDER_ID"
+      },
+      "meta": {},
+      "severity": "critical",
+      "type": "expect_column_to_exist"
+    },
+    {
+      "id": "893470d2-023c-4829-88c4-e88d5668f535",
+      "kwargs": {
+        "column": "ORDER_ID"
+      },
+      "meta": {},
+      "severity": "critical",
+      "type": "expect_column_values_to_not_be_null"
+    },
+    {
+      "id": "c552af99-0a18-4d7a-9c5a-89b2a41379db",
+      "kwargs": {
+        "column": "ORDER_ID"
+      },
+      "meta": {},
+      "severity": "critical",
+      "type": "expect_column_values_to_be_unique"
+    },
+    {
+      "id": "8f8c0229-a957-40fe-8470-095724be4753",
+      "kwargs": {
+        "column": "CUSTOMER_ID"
+      },
+      "meta": {},
+      "severity": "critical",
+      "type": "expect_column_values_to_not_be_null"
+    },
+    {
+      "id": "1802c97c-f142-49f8-8ae1-155ef4e48f2b",
+      "kwargs": {
+        "column": "STATUS",
+        "value_set": [
+          "PENDING",
+          "SHIPPED",
+          "DELIVERED",
+          "CANCELLED"
+        ]
+      },
+      "meta": {},
+      "severity": "critical",
+      "type": "expect_column_values_to_be_in_set"
+    },
+    {
+      "id": "5d853ef3-c677-4d33-a245-a5a9bce17594",
+      "kwargs": {
+        "column": "TOTAL_AMOUNT",
+        "max_value": 1000000.0,
+        "min_value": 0.0
+      },
+      "meta": {},
+      "severity": "critical",
+      "type": "expect_column_values_to_be_between"
+    }
+  ],
+  "id": "fc6e5d78-e1af-448d-b0e1-202072ab85c7",
+  "meta": {
+    "great_expectations_version": "1.14.0"
+  },
+  "name": "stg_orders_suite",
+  "notes": null
+}

@@ -1,0 +1,52 @@
+{
+  "expectations": [
+    {
+      "id": "48c83ba5-31f9-4f92-802d-c081cda70972",
+      "kwargs": {
+        "column": "RETURN_ID"
+      },
+      "meta": {},
+      "severity": "critical",
+      "type": "expect_column_to_exist"
+    },
+    {
+      "id": "d66ae3fa-f820-45f3-8796-b1ab8efd671d",
+      "kwargs": {
+        "column": "RETURN_ID"
+      },
+      "meta": {},
+      "severity": "critical",
+      "type": "expect_column_values_to_not_be_null"
+    },
+    {
+      "id": "6c2991a5-0f69-493f-ae3d-7a4c0f546d78",
+      "kwargs": {
+        "column": "ORDER_ID"
+      },
+      "meta": {},
+      "severity": "critical",
+      "type": "expect_column_values_to_not_be_null"
+    },
+    {
+      "id": "3e687a5c-2d1b-4b92-9fde-32794e6139a5",
+      "kwargs": {
+        "column": "RETURN_REASON",
+        "value_set": [
+          "WRONG_SIZE",
+          "DAMAGED",
+          "NOT_AS_DESCRIBED",
+          "CHANGED_MIND"
+        ]
+      },
+      "meta": {},
+      "severity": "critical",
+      "type": "expect_column_values_to_be_in_set"
+    }
+  ],
+  "id": "e6ef1878-35c9-4309-ab89-204549a846fc",
+  "meta": {
+    "great_expectations_version": "1.14.0"
+  },
+  "name": "stg_returns_suite",
+  "notes": null
+}
