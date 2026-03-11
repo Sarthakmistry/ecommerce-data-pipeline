@@ -10,8 +10,11 @@ webserver_config.py
 airflow.cfg
 airflow.db
 .env
-include/dbt/target/
-include/dbt/dbt_packages/
+include/ecommerce/target/
+include/ecommerce/dbt_packages/
 include/great_expectations/gx/uncommitted/
 include/ecommerce/profiles.yml
 include/great_expectations/gx/great_expectations.yml
+logs/
+plugins/
+tests/
