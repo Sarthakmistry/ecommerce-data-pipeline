@@ -13,3 +13,5 @@ airflow.db
 include/dbt/target/
 include/dbt/dbt_packages/
 include/great_expectations/uncommitted/
+include/ecommerce/profiles.yml
+include/great_expectations/gx/great_expectations.yml
