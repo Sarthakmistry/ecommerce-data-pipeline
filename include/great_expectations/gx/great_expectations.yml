@@ -81,13 +81,7 @@ data_docs_sites:
     site_index_builder:
       class_name: DefaultSiteIndexBuilder
 
-  github_site:
-    class_name: SiteBuilder
-    store_backend:
-      class_name: TupleFilesystemStoreBackend
-      base_directory: ../../../../../docs/data_docs/
-    site_index_builder:
-      class_name: DefaultSiteIndexBuilder
+  
 fluent_datasources:
   snowflake_staging:
     type: snowflake

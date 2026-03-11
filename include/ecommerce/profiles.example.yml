@@ -2,9 +2,9 @@ ecommerce:
   target: dev
   outputs:
     dev:
-      account: CVOHIOR-OY32875
+      account: your-account-identifier
       database: ECOMMERCE
-      password: nike@123
+      password: your-password
       role: PIPELINE_ROLE
       schema: RAW
       threads: 4
@@ -12,12 +12,12 @@ ecommerce:
       user: PIPELINE_USER
       warehouse: ECOMM_WH
     prod:
-      account: CVOHIOR-OY32875
+      account: your-account-identifier
       database: ECOMMERCE
-      password: nike@123
+      password: your-password
       role: PIPELINE_ROLE
       schema: STAGING
-      threads: 4
+      threads: 8
       type: snowflake
       user: PIPELINE_USER
       warehouse: ECOMM_WH

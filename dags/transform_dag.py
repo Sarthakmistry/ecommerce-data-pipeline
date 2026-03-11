@@ -39,9 +39,6 @@ def run_ge_checkpoint(checkpoint_name: str, dag_run_id: str = None):
 
     result = context.checkpoints.get(checkpoint_name).run()
 
-    # Rebuild Data Docs after every run
-    context.build_data_docs()
-
     if not result.success:
         failed_records = []
         for validation_key, validation_result in result.run_results.items():
