@@ -1,125 +1,84 @@
-# ecommerce — dbt Project
+This dbt project transforms raw VARIANT JSON from Snowflake into analytics-ready tables through a four-layer medallion architecture. The modeling approach progresses from simple cleaning (staging) through auditable history (Data Vault 2.0) to consumer-facing analytics (star schema + OBT).
 
-This dbt project transforms raw e-commerce data ingested by Airflow into analytics-ready star schema via a Data Vault 2.0 integration layer. It models  e-commerce data covering products, customers, orders, returns, and inventory.
-
----
-
-## Workflow Overview
+## Layer Architecture
 
 ```
-ECOMMERCE.RAW  (Airflow ingests here)
-      ↓
-ECOMMERCE.STAGING  (dbt staging models — clean, typed, deduplicated views)
-      ↓
-ECOMMERCE.VAULT  (dbt vault models — Data Vault 2.0: Hubs, Links, Satellites)
-      ↓
-ECOMMERCE.MARTS  (dbt snapshot — SCD Type 2)
-      ↓
-ECOMMERCE.MARTS  (dbt marts models — Star Schema: Dimensions + Facts)
+RAW (VARIANT JSON)
+ │
+ ▼
+STAGING — 4 views                    Flatten JSON, cast types, deduplicate
+ │
+ ▼
+VAULT — 3 hubs, 2 sats, 1 link      Insert-only, hash-keyed, change-detected
+ │
+ ▼
+SNAPSHOTS — 1 SCD Type 2             Track customer attribute changes over time
+ │
+ ▼
+MARTS — 3 dims, 3 facts, 1 OBT      Star schema + wide denormalized analytics table
 ```
 
----
+## Model Inventory
 
-## dbt Run Commands
+### Staging (`models/staging/`) — Materialized as views
 
-Always run layers in order. Each layer depends on the one above it.
+Each staging model reads from a single RAW source table, extracts fields from Snowflake VARIANT JSON using path notation (`RAW_DATA:field::TYPE`), and deduplicates using `ROW_NUMBER() OVER (PARTITION BY pk ORDER BY INGESTED_AT DESC)`.
+
+### Vault (`models/vault/`) — Materialized as incremental tables
+
+Implements Data Vault 2.0 with MD5 hash keys. Each model uses `is_incremental()` to insert only new records on subsequent runs.
+
+| Model | Type | Purpose |
+|---|---|---|
+| `hub_product` | Hub | Isolates product business key with load-date lineage |
+| `hub_customer` | Hub | Isolates customer business key |
+| `hub_order` | Hub | Isolates order business key (UUID) |
+| `sat_product_details` | Satellite | Tracks product attribute changes via `HASH_DIFF` on name + price + stock |
+| `sat_customer_details` | Satellite | Tracks customer attribute changes via `HASH_DIFF` on email + phone + address |
+| `lnk_order_product` | Link | Captures the order-to-product relationship as a composite hash key |
+
+**Change detection:** Satellites use `MD5(CONCAT(...))` as a `HASH_DIFF` column. On incremental runs, only records whose `HASH_DIFF` doesn't match any current (non-end-dated) satellite row are inserted. This means the vault accumulates a complete change history without duplicating unchanged records.
+
+### Snapshots (`snapshots/`) — SCD Type 2
+
+dbt automatically manages `DBT_VALID_FROM`, `DBT_VALID_TO`, `DBT_SCD_ID`, and `DBT_UPDATED_AT` columns. When a tracked column changes, the previous row gets an end-date and a new row is inserted with `DBT_VALID_TO = NULL` (current record).
+
+### Marts (`models/marts/`) — Materialized as tables
+
+| Model | Grain | Description |
+|---|---|---|
+| `dim_customer` | 1 row per customer | Current-state customer attributes from hub + satellite (where `END_DATE IS NULL`) |
+| `dim_product` | 1 row per product | Current-state product attributes from hub + satellite |
+| `dim_date` | 1 row per calendar day | Generated date spine from 2020–2030 with day/week/month/quarter attributes |
+| `fact_orders` | 1 row per order | Order metrics with surrogate key joins to all dimensions + return flag |
+| `fact_returns` | 1 row per return | Return details with reason flags and dimension key joins |
+| `fact_inventory` | 1 row per snapshot | Point-in-time stock levels with out-of-stock / low-stock derivations |
+| `obt_ecommerce` | 1 row per order | Wide denormalized table — see section below |
+
+## Commands
 
 ```bash
-# Navigate to dbt project root
 cd include/ecommerce
 
-# Verify Snowflake connection
+# Verify Snowflake connectivity
 dbt debug
 
-# Run individual layers in order
+# Run layers in dependency order
 dbt run --select staging
 dbt run --select vault
 dbt snapshot
 dbt run --select marts
 
-# Run all models at once (dbt resolves dependency order automatically)
+# Run everything (dbt resolves order automatically)
 dbt run
 
-# Run tests
-dbt test
+# Test
+dbt test                        # all tests
+dbt test --select staging       # layer-specific
 
-# Generate and serve dbt documentation
-dbt docs generate
-dbt docs serve
+# Always clear target/ after schema.yml changes
+rm -rf target/
+
+# Documentation
+dbt docs generate && dbt docs serve
 ```
-
----
-
-## Layer 1 — Staging Models (`models/staging/`)
-
-Materialized as **views** in `ECOMMERCE.STAGING`. Each model reads from raw Snowflake VARIANT JSON, flattens into typed columns, and deduplicates using `ROW_NUMBER()`
-
----
-
-## Layer 2 — Data Vault Models (`models/vault/`)
-
-Materialized as **incremental tables** in `ECOMMERCE.VAULT`. Implements Data Vault 2.0 with MD5 hash keys. Only new or changed records are inserted on each run.
-
-### Hubs — Business Keys
-
-### Satellites — Descriptive Attributes
-
-### Links — Relationships
-
----
-
-## Layer 3 — Snapshot (`snapshots/`)
-
-Implements **SCD Type 2** using dbt's native snapshot functionality. Tracks historical changes to customer attributes over time.
-
-dbt automatically adds these columns to every snapshot:
-
-| Column | Description |
-|---|---|
-| `DBT_VALID_FROM` | When this version of the record became active |
-| `DBT_VALID_TO` | When superseded — `NULL` means current record |
-| `DBT_SCD_ID` | Unique identifier for each historical row |
-| `DBT_UPDATED_AT` | Timestamp of last change |
-
-> **Important:** Snapshots must run **before** marts becuase of dependency
-
----
-
-## Layer 4 — Marts Models (`models/marts/`)
-
-Materialized as **tables** in `ECOMMERCE.MARTS`. Implements a star schema built on top of the vault layer. Consumer-ready for Snowflake dashboards and Snowsight.
-
-
-## Full Model Dependency Graph
-
-```
-RAW.RAW_PRODUCTS ──► stg_products ──► hub_product ──► sat_product_details ──► dim_product ──────────────────┐
-                                                                                                              │
-RAW.RAW_CUSTOMERS ──► stg_customers ──► hub_customer ──► sat_customer_details ──► dim_customer               │
-                                  └───► customer_snapshot (SCD Type 2) ─────────────────────────────────┐   │
-                                                                                                         ▼   ▼
-RAW.RAW_ORDERS ──► stg_orders ──────────────────────────────────────────────────────────────────────► fact_orders
-                          └──────────────────────────────────────────────────────────────────────────► lnk_order_product
-
-RAW.RAW_RETURNS ──► stg_returns ──────────────────────────────────────────────────────────────────────► fact_orders
-
-dim_date ─────────────────────────────────────────────────────────────────────────────────────────────► fact_orders
-```
-
----
-
-## Schema Routing
-
-Schemas are controlled by `dbt_project.yml` and a custom `generate_schema_name` macro in `macros/generate_schema_name.sql`. Without this macro, dbt prefixes the profile's default schema to every custom schema (creating `RAW_STAGING` instead of `STAGING`).
-
----
-
-## Profiles
-
-`profiles.yml` is gitignored. Copy the example and fill in your Snowflake credentials:
-
-```bash
-cp profiles.example.yml profiles.yml
-```
-
-The `schema` field in `profiles.yml` acts only as a fallback default — it does not affect where models land because all layers have explicit `+schema` defined in `dbt_project.yml`.
