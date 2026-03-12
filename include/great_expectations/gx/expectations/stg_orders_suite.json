@@ -1,7 +1,7 @@
 {
   "expectations": [
     {
-      "id": "3587aade-5ba1-423f-8739-73a3d5396d1b",
+      "id": "76b142b6-2a3d-4962-864a-02b065945f3a",
       "kwargs": {
         "column": "ORDER_ID"
       },
@@ -10,7 +10,7 @@
       "type": "expect_column_to_exist"
     },
     {
-      "id": "893470d2-023c-4829-88c4-e88d5668f535",
+      "id": "f616fa03-449a-45df-961d-83067d1517b3",
       "kwargs": {
         "column": "ORDER_ID"
       },
@@ -19,7 +19,7 @@
       "type": "expect_column_values_to_not_be_null"
     },
     {
-      "id": "c552af99-0a18-4d7a-9c5a-89b2a41379db",
+      "id": "06da8675-0afd-413f-a9eb-d3e81e8b8d4c",
       "kwargs": {
         "column": "ORDER_ID"
       },
@@ -28,16 +28,7 @@
       "type": "expect_column_values_to_be_unique"
     },
     {
-      "id": "8f8c0229-a957-40fe-8470-095724be4753",
-      "kwargs": {
-        "column": "CUSTOMER_ID"
-      },
-      "meta": {},
-      "severity": "critical",
-      "type": "expect_column_values_to_not_be_null"
-    },
-    {
-      "id": "1802c97c-f142-49f8-8ae1-155ef4e48f2b",
+      "id": "e0297dc7-edcd-45d8-ac0a-260748859d9a",
       "kwargs": {
         "column": "STATUS",
         "value_set": [
@@ -52,15 +43,57 @@
       "type": "expect_column_values_to_be_in_set"
     },
     {
-      "id": "5d853ef3-c677-4d33-a245-a5a9bce17594",
+      "id": "907ee229-4b6b-41dc-8161-576883d8cb92",
       "kwargs": {
-        "column": "TOTAL_AMOUNT",
-        "max_value": 1000000.0,
-        "min_value": 0.0
+        "column": "ORDER_DATE",
+        "max_value": "2026-03-11",
+        "min_value": "2020-01-01"
       },
       "meta": {},
       "severity": "critical",
       "type": "expect_column_values_to_be_between"
+    },
+    {
+      "id": "d0b68126-f4e0-4c71-b7f9-5e0cd5144c19",
+      "kwargs": {
+        "column": "ORDER_DATE",
+        "min_value": "2026-03-11"
+      },
+      "meta": {},
+      "severity": "critical",
+      "type": "expect_column_max_to_be_between"
+    },
+    {
+      "id": "94a1d458-e058-4432-9005-b7a793008f35",
+      "kwargs": {
+        "column": "TOTAL_AMOUNT",
+        "max_value": 100000.0,
+        "min_value": 0.01
+      },
+      "meta": {},
+      "severity": "critical",
+      "type": "expect_column_values_to_be_between"
+    },
+    {
+      "id": "523e459d-3349-46bf-ac41-91fd8f3361a7",
+      "kwargs": {
+        "column": "TOTAL_AMOUNT",
+        "max_value": 400.0,
+        "min_value": 50.0
+      },
+      "meta": {},
+      "severity": "critical",
+      "type": "expect_column_mean_to_be_between"
+    },
+    {
+      "id": "47a070f0-548c-448b-92d2-9bdf45d544f1",
+      "kwargs": {
+        "max_value": 100000,
+        "min_value": 100
+      },
+      "meta": {},
+      "severity": "critical",
+      "type": "expect_table_row_count_to_be_between"
     }
   ],
   "id": "fc6e5d78-e1af-448d-b0e1-202072ab85c7",

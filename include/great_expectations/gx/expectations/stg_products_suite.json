@@ -1,7 +1,7 @@
 {
   "expectations": [
     {
-      "id": "d1b722ab-f625-494f-ba3d-5bb19ddcf7e0",
+      "id": "6f57d7dd-7325-4a55-890c-d1a2e97d061e",
       "kwargs": {
         "column": "PRODUCT_ID"
       },
@@ -10,7 +10,7 @@
       "type": "expect_column_to_exist"
     },
     {
-      "id": "c9a96954-be0b-43ba-9106-b370db3010d1",
+      "id": "7dff80c4-44eb-48da-ab3b-f8b786172899",
       "kwargs": {
         "column": "PRODUCT_ID"
       },
@@ -19,7 +19,7 @@
       "type": "expect_column_values_to_not_be_null"
     },
     {
-      "id": "2673b156-ccd1-451f-a1cb-695005a06220",
+      "id": "5f68642d-3028-48c0-bc71-413a24505711",
       "kwargs": {
         "column": "PRODUCT_ID"
       },
@@ -28,7 +28,7 @@
       "type": "expect_column_values_to_be_unique"
     },
     {
-      "id": "5aa30bf4-6164-4e0b-b660-9e4a7bb866fd",
+      "id": "bd64e713-195b-4c4d-98c7-18121003e228",
       "kwargs": {
         "column": "PRODUCT_NAME"
       },
@@ -37,7 +37,7 @@
       "type": "expect_column_values_to_not_be_null"
     },
     {
-      "id": "8a0c5b75-d233-4eff-b2af-8721a551aca2",
+      "id": "b4387478-550b-45ad-83bd-7f6420625af6",
       "kwargs": {
         "column": "PRICE",
         "max_value": 100000.0,
@@ -48,7 +48,39 @@
       "type": "expect_column_values_to_be_between"
     },
     {
-      "id": "cb1e9705-7449-488f-a5d7-aec84e5d3b35",
+      "id": "2cbd482a-43d6-4cdf-aec3-5afa1dc991c3",
+      "kwargs": {
+        "max_value": 100000,
+        "min_value": 1
+      },
+      "meta": {},
+      "severity": "critical",
+      "type": "expect_table_row_count_to_be_between"
+    },
+    {
+      "id": "e31678f2-6650-472f-b06b-6a35a17db0a6",
+      "kwargs": {
+        "column": "PRICE",
+        "max_value": 2000.0,
+        "min_value": 5.0
+      },
+      "meta": {},
+      "severity": "critical",
+      "type": "expect_column_mean_to_be_between"
+    },
+    {
+      "id": "a7d8e2c7-03ea-4f63-b279-8688c2291c53",
+      "kwargs": {
+        "column": "RATING",
+        "max_value": 5.0,
+        "min_value": 0.0
+      },
+      "meta": {},
+      "severity": "critical",
+      "type": "expect_column_values_to_be_between"
+    },
+    {
+      "id": "3afeca9f-f273-49ae-8928-dce2e5124d8f",
       "kwargs": {
         "column": "STOCK_QUANTITY",
         "max_value": 100000.0,
@@ -57,16 +89,6 @@
       "meta": {},
       "severity": "critical",
       "type": "expect_column_values_to_be_between"
-    },
-    {
-      "id": "f9b224b6-2d91-4e3a-b6c6-9ff642c11c75",
-      "kwargs": {
-        "max_value": 100000,
-        "min_value": 1
-      },
-      "meta": {},
-      "severity": "critical",
-      "type": "expect_table_row_count_to_be_between"
     }
   ],
   "id": "ca123527-65fe-47bb-b26b-1cff15416cea",

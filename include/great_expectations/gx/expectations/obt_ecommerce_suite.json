@@ -1,0 +1,225 @@
+{
+  "expectations": [
+    {
+      "id": "e91fb2c7-dd73-4818-b569-b9d6fed9cf44",
+      "kwargs": {
+        "column": "ORDER_ID"
+      },
+      "meta": {},
+      "severity": "critical",
+      "type": "expect_column_values_to_not_be_null"
+    },
+    {
+      "id": "bf7c20fd-e396-41d0-a394-10c3efbe88b0",
+      "kwargs": {
+        "column": "ORDER_ID"
+      },
+      "meta": {},
+      "severity": "critical",
+      "type": "expect_column_values_to_be_unique"
+    },
+    {
+      "id": "5da0ab23-f33a-45b9-982d-76f942714f72",
+      "kwargs": {
+        "column": "CUSTOMER_ID"
+      },
+      "meta": {},
+      "severity": "critical",
+      "type": "expect_column_values_to_not_be_null"
+    },
+    {
+      "id": "5e25e0fb-408f-4855-bd5e-0ee240cd3fa0",
+      "kwargs": {
+        "column": "PRODUCT_ID"
+      },
+      "meta": {},
+      "severity": "critical",
+      "type": "expect_column_values_to_not_be_null"
+    },
+    {
+      "id": "f878d6e0-d495-4a47-8383-cdc253713245",
+      "kwargs": {
+        "column": "FIRST_NAME"
+      },
+      "meta": {},
+      "severity": "critical",
+      "type": "expect_column_values_to_not_be_null"
+    },
+    {
+      "id": "039a4d0e-54f1-40ac-be46-9f18c7c5992f",
+      "kwargs": {
+        "column": "PRODUCT_NAME"
+      },
+      "meta": {},
+      "severity": "critical",
+      "type": "expect_column_values_to_not_be_null"
+    },
+    {
+      "id": "e0a0baec-df39-483b-827f-12f315566006",
+      "kwargs": {
+        "column": "CUSTOMER_LIFETIME_VALUE"
+      },
+      "meta": {},
+      "severity": "critical",
+      "type": "expect_column_values_to_not_be_null"
+    },
+    {
+      "id": "5e762d21-e716-4d09-a1b1-7f2bc1919564",
+      "kwargs": {
+        "column": "CUSTOMER_TOTAL_ORDERS"
+      },
+      "meta": {},
+      "severity": "critical",
+      "type": "expect_column_values_to_not_be_null"
+    },
+    {
+      "id": "4894f35c-3938-4034-9566-347785af95d9",
+      "kwargs": {
+        "column": "PRODUCT_REVENUE_RANK"
+      },
+      "meta": {},
+      "severity": "critical",
+      "type": "expect_column_values_to_not_be_null"
+    },
+    {
+      "id": "a42908f2-f59e-4495-b5e9-4264f4f586b7",
+      "kwargs": {
+        "column": "CUSTOMER_SEGMENT"
+      },
+      "meta": {},
+      "severity": "critical",
+      "type": "expect_column_values_to_not_be_null"
+    },
+    {
+      "id": "30f8661b-06b4-40e8-9647-ba837fd5082c",
+      "kwargs": {
+        "column": "CUSTOMER_SEGMENT",
+        "value_set": [
+          "Champions",
+          "Loyal Customers",
+          "Recent Customers",
+          "Big Spenders",
+          "At Risk",
+          "Occasional Buyers"
+        ]
+      },
+      "meta": {},
+      "severity": "critical",
+      "type": "expect_column_values_to_be_in_set"
+    },
+    {
+      "id": "62548232-da2a-4e3f-99aa-dc04a7cdcf1b",
+      "kwargs": {
+        "column": "ORDER_VALUE_TIER",
+        "value_set": [
+          "High Value",
+          "Mid Value",
+          "Low Value"
+        ]
+      },
+      "meta": {},
+      "severity": "critical",
+      "type": "expect_column_values_to_be_in_set"
+    },
+    {
+      "id": "da5d3e05-8815-4ce5-be7d-c500416e0029",
+      "kwargs": {
+        "column": "PRODUCT_PERFORMANCE_TIER",
+        "value_set": [
+          "Category Leader",
+          "Top 3",
+          "Top 10",
+          "Standard"
+        ]
+      },
+      "meta": {},
+      "severity": "critical",
+      "type": "expect_column_values_to_be_in_set"
+    },
+    {
+      "id": "3459eec9-ff2f-4416-a124-7aee86821449",
+      "kwargs": {
+        "column": "CUSTOMER_FREQUENCY_QUARTILE",
+        "max_value": 4.0,
+        "min_value": 1.0
+      },
+      "meta": {},
+      "severity": "critical",
+      "type": "expect_column_values_to_be_between"
+    },
+    {
+      "id": "4349cbe8-f150-47d0-b444-bb4a65a19dc3",
+      "kwargs": {
+        "column": "CUSTOMER_MONETARY_QUARTILE",
+        "max_value": 4.0,
+        "min_value": 1.0
+      },
+      "meta": {},
+      "severity": "critical",
+      "type": "expect_column_values_to_be_between"
+    },
+    {
+      "id": "ab2b675e-4b53-4146-89e3-240cc4cd541a",
+      "kwargs": {
+        "column": "CUSTOMER_LIFETIME_VALUE",
+        "max_value": 10000000.0,
+        "min_value": 0.01
+      },
+      "meta": {},
+      "severity": "critical",
+      "type": "expect_column_values_to_be_between"
+    },
+    {
+      "id": "f8245bb5-7a3d-492e-b6de-de8665b2124f",
+      "kwargs": {
+        "column": "PRODUCT_CATEGORY_REVENUE_SHARE_PCT",
+        "max_value": 100.0,
+        "min_value": 0.0
+      },
+      "meta": {},
+      "severity": "critical",
+      "type": "expect_column_values_to_be_between"
+    },
+    {
+      "id": "93a4cd35-c928-479f-aaf3-2ccefe981f6e",
+      "kwargs": {
+        "column": "PRODUCT_RETURN_RATE_PCT",
+        "max_value": 100.0,
+        "min_value": 0.0
+      },
+      "meta": {},
+      "severity": "critical",
+      "type": "expect_column_values_to_be_between"
+    },
+    {
+      "id": "477b8f07-000d-44b0-b3ed-f5c1c3950016",
+      "kwargs": {
+        "column": "ORDER_DATE",
+        "min_value": "2026-03-11"
+      },
+      "meta": {},
+      "severity": "critical",
+      "type": "expect_column_max_to_be_between"
+    },
+    {
+      "id": "113ab03b-adcb-40dd-9d2d-fcc049298a1c",
+      "kwargs": {
+        "column": "ORDER_VALUE_TIER",
+        "value_set": [
+          "High Value",
+          "Mid Value",
+          "Low Value"
+        ]
+      },
+      "meta": {},
+      "severity": "critical",
+      "type": "expect_column_distinct_values_to_contain_set"
+    }
+  ],
+  "id": "7a664b10-3c92-4cab-89af-d3a8c0adec5b",
+  "meta": {
+    "great_expectations_version": "1.14.0"
+  },
+  "name": "obt_ecommerce_suite",
+  "notes": null
+}

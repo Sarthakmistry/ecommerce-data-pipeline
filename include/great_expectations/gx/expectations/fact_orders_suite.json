@@ -1,0 +1,136 @@
+{
+  "expectations": [
+    {
+      "id": "fba92b80-cf4d-49e8-bcfe-65dc1e4e91eb",
+      "kwargs": {
+        "column": "ORDER_ID"
+      },
+      "meta": {},
+      "severity": "critical",
+      "type": "expect_column_values_to_not_be_null"
+    },
+    {
+      "id": "6f29ee6b-d28b-4a59-a27c-c0d4a4135aa3",
+      "kwargs": {
+        "column": "ORDER_ID"
+      },
+      "meta": {},
+      "severity": "critical",
+      "type": "expect_column_values_to_be_unique"
+    },
+    {
+      "id": "fcc4c145-9301-40d3-80a1-8d28df06686e",
+      "kwargs": {
+        "column": "CUSTOMER_SK"
+      },
+      "meta": {},
+      "severity": "critical",
+      "type": "expect_column_values_to_not_be_null"
+    },
+    {
+      "id": "4a1f3b56-7574-480d-9c99-dd9f0411efd9",
+      "kwargs": {
+        "column": "PRODUCT_SK"
+      },
+      "meta": {},
+      "severity": "critical",
+      "type": "expect_column_values_to_not_be_null"
+    },
+    {
+      "id": "f5ae3150-022e-4412-956e-fd0a5ad1f12f",
+      "kwargs": {
+        "column": "STATUS",
+        "value_set": [
+          "PENDING",
+          "SHIPPED",
+          "DELIVERED",
+          "CANCELLED"
+        ]
+      },
+      "meta": {},
+      "severity": "critical",
+      "type": "expect_column_distinct_values_to_contain_set"
+    },
+    {
+      "id": "cb11e987-af7d-4779-9a6c-7963f7c6d5e5",
+      "kwargs": {
+        "column": "TOTAL_AMOUNT",
+        "max_value": 400.0,
+        "min_value": 50.0
+      },
+      "meta": {},
+      "severity": "critical",
+      "type": "expect_column_mean_to_be_between"
+    },
+    {
+      "id": "f6418d22-078b-4fb6-92ac-5932d986cd24",
+      "kwargs": {
+        "column": "TOTAL_AMOUNT",
+        "max_value": 300.0,
+        "min_value": 10.0
+      },
+      "meta": {},
+      "severity": "critical",
+      "type": "expect_column_stdev_to_be_between"
+    },
+    {
+      "id": "8bd1471d-0f09-4f6f-8bc8-091a4eaf8079",
+      "kwargs": {
+        "column": "TOTAL_AMOUNT",
+        "max_value": 100000.0,
+        "min_value": 0.01
+      },
+      "meta": {},
+      "severity": "critical",
+      "type": "expect_column_values_to_be_between"
+    },
+    {
+      "id": "e45ebf3d-d224-4407-ad05-ff2271da0684",
+      "kwargs": {
+        "column": "ORDER_DATE",
+        "min_value": "2026-03-11"
+      },
+      "meta": {},
+      "severity": "critical",
+      "type": "expect_column_max_to_be_between"
+    },
+    {
+      "id": "b07ee711-7972-4734-8ab2-3ab3d0297c10",
+      "kwargs": {
+        "column": "ORDER_DATE",
+        "max_value": "2026-01-11",
+        "min_value": "2020-01-01"
+      },
+      "meta": {},
+      "severity": "critical",
+      "type": "expect_column_min_to_be_between"
+    },
+    {
+      "id": "e29a3e9a-573b-4c5d-a598-fcec893ef771",
+      "kwargs": {
+        "column": "IS_RETURNED",
+        "max_value": 1.0,
+        "min_value": 0.0
+      },
+      "meta": {},
+      "severity": "critical",
+      "type": "expect_column_values_to_be_between"
+    },
+    {
+      "id": "397ced0e-0859-4d49-80ca-45f7576c5480",
+      "kwargs": {
+        "max_value": 10000000,
+        "min_value": 100
+      },
+      "meta": {},
+      "severity": "critical",
+      "type": "expect_table_row_count_to_be_between"
+    }
+  ],
+  "id": "f3a6a033-c3b9-4d02-82d5-8799d806ac42",
+  "meta": {
+    "great_expectations_version": "1.14.0"
+  },
+  "name": "fact_orders_suite",
+  "notes": null
+}

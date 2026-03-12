@@ -1,11 +1,11 @@
 {
   "data": {
     "asset": {
-      "id": "4020a3d2-5453-42f3-859e-322a42e0c191",
+      "id": "e68097d0-9d30-4f45-920c-2ae177e5d0c9",
       "name": "stg_orders"
     },
     "batch_definition": {
-      "id": "1db4146d-39d6-490b-b66e-df9086e0f9eb",
+      "id": "85e4a82e-bffa-49ae-9d8f-58bdbf2415bc",
       "name": "full_table"
     },
     "datasource": {

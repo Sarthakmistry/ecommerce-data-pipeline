@@ -1,0 +1,99 @@
+{
+  "expectations": [
+    {
+      "id": "9ca8676b-88c5-4c18-886b-377f44fec13a",
+      "kwargs": {
+        "column": "RETURN_ID"
+      },
+      "meta": {},
+      "severity": "critical",
+      "type": "expect_column_values_to_not_be_null"
+    },
+    {
+      "id": "2fd2388d-8d7b-40ad-a9db-c8f23c964bb0",
+      "kwargs": {
+        "column": "RETURN_ID"
+      },
+      "meta": {},
+      "severity": "critical",
+      "type": "expect_column_values_to_be_unique"
+    },
+    {
+      "id": "f511b31c-e12e-45f3-8893-ae7a7bba89a3",
+      "kwargs": {
+        "column": "CUSTOMER_SK"
+      },
+      "meta": {},
+      "severity": "critical",
+      "type": "expect_column_values_to_not_be_null"
+    },
+    {
+      "id": "c84f836f-261d-427c-92ca-24c30f87f09a",
+      "kwargs": {
+        "column": "RETURN_REASON",
+        "value_set": [
+          "WRONG_SIZE",
+          "DAMAGED",
+          "NOT_AS_DESCRIBED",
+          "CHANGED_MIND"
+        ]
+      },
+      "meta": {},
+      "severity": "critical",
+      "type": "expect_column_values_to_be_in_set"
+    },
+    {
+      "id": "5d91219d-b507-42b7-b4bf-b6fd43cb78c8",
+      "kwargs": {
+        "column": "REFUND_AMOUNT",
+        "max_value": 100000.0,
+        "min_value": 0.01
+      },
+      "meta": {},
+      "severity": "critical",
+      "type": "expect_column_values_to_be_between"
+    },
+    {
+      "id": "412b344e-0777-4e70-bc0b-9b2bf97c8c51",
+      "kwargs": {
+        "column": "REFUND_AMOUNT",
+        "max_value": 500.0,
+        "min_value": 0.01
+      },
+      "meta": {},
+      "severity": "critical",
+      "type": "expect_column_values_to_be_between"
+    },
+    {
+      "id": "af06286a-c214-4e8d-b7c1-d22b646c5b3d",
+      "kwargs": {
+        "column": "RETURN_DATE",
+        "min_value": "2026-03-11"
+      },
+      "meta": {},
+      "severity": "critical",
+      "type": "expect_column_max_to_be_between"
+    },
+    {
+      "id": "48ef7680-1527-4bb6-ac80-22ba3240a6a5",
+      "kwargs": {
+        "column": "RETURN_REASON",
+        "value_set": [
+          "WRONG_SIZE",
+          "DAMAGED",
+          "NOT_AS_DESCRIBED",
+          "CHANGED_MIND"
+        ]
+      },
+      "meta": {},
+      "severity": "critical",
+      "type": "expect_column_distinct_values_to_contain_set"
+    }
+  ],
+  "id": "b99fd5ed-45d9-4d40-afb4-707b4a9928fa",
+  "meta": {
+    "great_expectations_version": "1.14.0"
+  },
+  "name": "fact_returns_suite",
+  "notes": null
+}

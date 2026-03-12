@@ -1,16 +1,7 @@
 {
   "expectations": [
     {
-      "id": "48c83ba5-31f9-4f92-802d-c081cda70972",
-      "kwargs": {
-        "column": "RETURN_ID"
-      },
-      "meta": {},
-      "severity": "critical",
-      "type": "expect_column_to_exist"
-    },
-    {
-      "id": "d66ae3fa-f820-45f3-8796-b1ab8efd671d",
+      "id": "869e775f-db1a-4e80-825b-3582a3581627",
       "kwargs": {
         "column": "RETURN_ID"
       },
@@ -19,16 +10,7 @@
       "type": "expect_column_values_to_not_be_null"
     },
     {
-      "id": "6c2991a5-0f69-493f-ae3d-7a4c0f546d78",
-      "kwargs": {
-        "column": "ORDER_ID"
-      },
-      "meta": {},
-      "severity": "critical",
-      "type": "expect_column_values_to_not_be_null"
-    },
-    {
-      "id": "3e687a5c-2d1b-4b92-9fde-32794e6139a5",
+      "id": "3c3d28b5-b4d9-4bbb-889f-e2648fa164bd",
       "kwargs": {
         "column": "RETURN_REASON",
         "value_set": [
@@ -41,6 +23,38 @@
       "meta": {},
       "severity": "critical",
       "type": "expect_column_values_to_be_in_set"
+    },
+    {
+      "id": "6220dbbd-9680-4723-83f4-f0909cb5a0b5",
+      "kwargs": {
+        "column": "RETURN_DATE",
+        "max_value": "2026-03-11",
+        "min_value": "2020-01-01"
+      },
+      "meta": {},
+      "severity": "critical",
+      "type": "expect_column_values_to_be_between"
+    },
+    {
+      "id": "3c21b8dd-cd02-49d7-9e2f-b783d2f594ba",
+      "kwargs": {
+        "column": "REFUND_AMOUNT",
+        "max_value": 100000.0,
+        "min_value": 0.01
+      },
+      "meta": {},
+      "severity": "critical",
+      "type": "expect_column_values_to_be_between"
+    },
+    {
+      "id": "a36a96e7-3dcd-4c3d-be06-702c6696f2c3",
+      "kwargs": {
+        "column": "RETURN_DATE",
+        "min_value": "2026-03-11"
+      },
+      "meta": {},
+      "severity": "critical",
+      "type": "expect_column_max_to_be_between"
     }
   ],
   "id": "e6ef1878-35c9-4309-ab89-204549a846fc",

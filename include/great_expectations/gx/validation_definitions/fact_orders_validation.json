@@ -1,0 +1,22 @@
+{
+  "data": {
+    "asset": {
+      "id": "ef939157-f4a0-40ef-b2fe-d0e75f6ff68c",
+      "name": "fact_orders"
+    },
+    "batch_definition": {
+      "id": "7c0affe2-eb8c-4064-92c5-1a1ee67a4323",
+      "name": "full_table"
+    },
+    "datasource": {
+      "id": "ce1c89ca-b59c-453e-a42f-caeaf9dea5f2",
+      "name": "snowflake_marts"
+    }
+  },
+  "id": "a3d4f008-9ac0-42a8-8046-525699e94330",
+  "name": "fact_orders_validation",
+  "suite": {
+    "id": "f3a6a033-c3b9-4d02-82d5-8799d806ac42",
+    "name": "fact_orders_suite"
+  }
+}

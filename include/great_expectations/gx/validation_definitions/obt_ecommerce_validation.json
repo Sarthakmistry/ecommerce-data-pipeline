@@ -1,0 +1,22 @@
+{
+  "data": {
+    "asset": {
+      "id": "d0b3b12c-fce2-4a39-94ed-2c2dc5e8f326",
+      "name": "obt_ecommerce"
+    },
+    "batch_definition": {
+      "id": "967bf0c0-47e9-434e-ac30-14da9fe38fd8",
+      "name": "full_table"
+    },
+    "datasource": {
+      "id": "ce1c89ca-b59c-453e-a42f-caeaf9dea5f2",
+      "name": "snowflake_marts"
+    }
+  },
+  "id": "4a7cab61-3f2c-4428-a996-60a1566d8bc4",
+  "name": "obt_ecommerce_validation",
+  "suite": {
+    "id": "7a664b10-3c92-4cab-89af-d3a8c0adec5b",
+    "name": "obt_ecommerce_suite"
+  }
+}

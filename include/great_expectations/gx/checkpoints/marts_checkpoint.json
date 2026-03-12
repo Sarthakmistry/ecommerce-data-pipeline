@@ -1,0 +1,20 @@
+{
+  "actions": [],
+  "id": "bc2b1bb3-81aa-4eb2-b61c-6bb22115afa3",
+  "name": "marts_checkpoint",
+  "result_format": "SUMMARY",
+  "validation_definitions": [
+    {
+      "id": "a3d4f008-9ac0-42a8-8046-525699e94330",
+      "name": "fact_orders_validation"
+    },
+    {
+      "id": "8fd918f3-afc8-46b6-9bef-6012d73bf761",
+      "name": "fact_returns_validation"
+    },
+    {
+      "id": "4a7cab61-3f2c-4428-a996-60a1566d8bc4",
+      "name": "obt_ecommerce_validation"
+    }
+  ]
+}
