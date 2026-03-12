@@ -1,0 +1,123 @@
+version: 2
+
+# SEVERITY GUIDE:
+#   error  → genuine pipeline bug, should block downstream (default)
+#   warn   → source data reality or Faker quirk, should NOT block pipeline
+
+models:
+  - name: stg_products
+    description: "Deduplicated product records from DummyJSON API"
+    columns:
+      - name: PRODUCT_ID
+        description: "Primary key - unique product identifier"
+        tests:
+          - not_null
+          - unique
+      - name: PRODUCT_NAME
+        tests:
+          - not_null
+      - name: PRICE
+        description: "Product price - must be positive"
+        tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              min_value: 0
+              inclusive: false
+      - name: CATEGORY
+        tests:
+          - not_null
+      - name: BRAND
+        description: "DummyJSON omits brand on ~62/100 products — source data reality"
+        tests:
+          - not_null:
+              severity: warn
+
+  - name: stg_customers
+    description: "Deduplicated customer records from DummyJSON API"
+    columns:
+      - name: CUSTOMER_ID
+        description: "Primary key - unique customer identifier"
+        tests:
+          - not_null
+          - unique
+      - name: EMAIL
+        tests:
+          - not_null
+          - unique
+      - name: FIRST_NAME
+        tests:
+          - not_null
+      - name: LAST_NAME
+        tests:
+          - not_null
+
+  - name: stg_orders
+    description: "Deduplicated order records generated via Faker"
+    columns:
+      - name: ORDER_ID
+        description: "Primary key - UUID for each order"
+        tests:
+          - not_null
+          - unique
+      - name: CUSTOMER_ID
+        tests:
+          - not_null
+          - relationships:
+              to: ref('stg_customers')
+              field: CUSTOMER_ID
+              # Faker generates customer_id 1–100, DummyJSON always returns 100 customers
+              # This should always pass — keep as error
+      - name: PRODUCT_ID
+        tests:
+          - not_null:
+              severity: warn
+              # VARIANT key case sensitivity can cause nulls depending on connector version
+              # The COALESCE in stg_orders handles this but warn if still null
+          - relationships:
+              to: ref('stg_products')
+              field: PRODUCT_ID
+              severity: warn
+              # Same reason — warn rather than block if join misses
+      - name: STATUS
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['PENDING', 'SHIPPED', 'DELIVERED', 'CANCELLED']
+      - name: TOTAL_AMOUNT
+        tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              min_value: 0
+              inclusive: false
+      - name: ORDER_DATE
+        tests:
+          - not_null
+
+  - name: stg_returns
+    description: "Deduplicated return records generated via Faker"
+    columns:
+      - name: RETURN_ID
+        description: "Primary key - UUID for each return"
+        tests:
+          - not_null
+          - unique
+      - name: ORDER_ID
+        tests:
+          - not_null
+      - name: CUSTOMER_ID
+        tests:
+          - not_null
+      - name: RETURN_REASON
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['WRONG_SIZE', 'DAMAGED', 'NOT_AS_DESCRIBED', 'CHANGED_MIND']
+      - name: REFUND_AMOUNT
+        tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              min_value: 0
+              inclusive: false
+      - name: RETURN_DATE
+        tests:
+          - not_null

@@ -1,0 +1,218 @@
+version: 2
+
+#   error  → genuine pipeline bug, should block downstream (default)
+#   warn   → join miss or source data gap, should NOT block pipeline
+
+models:
+  - name: dim_product
+    description: "Product dimension - current snapshot joined from hub + satellite"
+    columns:
+      - name: PRODUCT_HK
+        description: "Surrogate key"
+        tests:
+          - not_null
+          - unique
+      - name: PRODUCT_ID
+        description: "Business key"
+        tests:
+          - not_null
+          - unique
+      - name: PRODUCT_NAME
+        tests:
+          - not_null
+      - name: PRICE
+        tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              min_value: 0
+              inclusive: false
+      - name: CATEGORY
+        tests:
+          - not_null
+
+  - name: dim_customer
+    description: "Customer dimension - current snapshot joined from hub + satellite"
+    columns:
+      - name: CUSTOMER_HK
+        description: "Surrogate key"
+        tests:
+          - not_null
+          - unique
+      - name: CUSTOMER_ID
+        description: "Business key"
+        tests:
+          - not_null
+          - unique
+      - name: EMAIL
+        tests:
+          - not_null
+          - unique
+      - name: FIRST_NAME
+        tests:
+          - not_null
+      - name: LAST_NAME
+        tests:
+          - not_null
+
+  - name: dim_date
+    description: "Date dimension spine - 2020-01-01 to ~2030"
+    columns:
+      - name: DATE_KEY
+        description: "Primary key - the calendar date"
+        tests:
+          - not_null
+          - unique
+      - name: YEAR
+        tests:
+          - not_null
+      - name: MONTH
+        tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              min_value: 1
+              max_value: 12
+      - name: DAY
+        tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              min_value: 1
+              max_value: 31
+      - name: QUARTER
+        tests:
+          - accepted_values:
+              values: [1, 2, 3, 4]
+
+  - name: fact_orders
+    description: "Orders fact table - grain is one row per order"
+    columns:
+      - name: ORDER_ID
+        description: "Natural key - UUID"
+        tests:
+          - not_null
+          - unique
+      - name: CUSTOMER_SK
+        description: "FK to dim_customer via CUSTOMER_HK"
+        tests:
+          - not_null
+          # relationship test removed — same Snowflake numeric cast error (100038)
+          # GE marts_checkpoint validates this instead.
+      - name: PRODUCT_SK
+        description: "FK to dim_product via PRODUCT_HK"
+        tests:
+          - not_null:
+              severity: warn
+              # Faker product_id 1–100 should always match, but VARIANT case
+              # sensitivity can cause misses — warn rather than block
+          - relationships:
+              to: ref('dim_product')
+              field: PRODUCT_HK
+              severity: warn
+      - name: DATE_KEY
+        tests:
+          - not_null
+          - relationships:
+              to: ref('dim_date')
+              field: DATE_KEY
+      - name: TOTAL_AMOUNT
+        tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              min_value: 0
+              inclusive: false
+      - name: STATUS
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['PENDING', 'SHIPPED', 'DELIVERED', 'CANCELLED']
+      - name: IS_RETURNED
+        tests:
+          - not_null
+          - accepted_values:
+              values: [0, 1]
+
+  - name: fact_returns
+    description: "Returns fact table - grain is one row per return event"
+    columns:
+      - name: RETURN_ID
+        description: "Natural key - UUID"
+        tests:
+          - not_null
+          - unique
+      - name: ORDER_ID
+        tests:
+          - not_null
+      - name: CUSTOMER_SK
+        tests:
+          - not_null
+      - name: PRODUCT_SK
+        tests:
+          - not_null:
+              severity: warn
+          - relationships:
+              to: ref('dim_product')
+              field: PRODUCT_HK
+              severity: warn
+      - name: RETURN_DATE
+        tests:
+          - not_null
+      - name: RETURN_REASON
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['WRONG_SIZE', 'DAMAGED', 'NOT_AS_DESCRIBED', 'CHANGED_MIND']
+      - name: REFUND_AMOUNT
+        tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              min_value: 0
+              inclusive: false
+      - name: DATE_KEY
+        tests:
+          - relationships:
+              to: ref('dim_date')
+              field: DATE_KEY
+              severity: warn
+
+  - name: fact_inventory
+    description: "Inventory periodic snapshot fact - grain is one row per product/warehouse/date"
+    columns:
+      - name: SNAPSHOT_ID
+        description: "Natural key - UUID"
+        tests:
+          - not_null
+          - unique
+      - name: SNAPSHOT_DATE
+        tests:
+          - not_null
+      - name: WAREHOUSE_LOCATION
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['US-WEST', 'US-EAST', 'EU-CENTRAL', 'APAC']
+      - name: STOCK_LEVEL
+        tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              min_value: 0
+      - name: PRODUCT_SK
+        tests:
+          - not_null:
+              severity: warn
+          - relationships:
+              to: ref('dim_product')
+              field: PRODUCT_HK
+              severity: warn
+      - name: DATE_KEY
+        tests:
+          - relationships:
+              to: ref('dim_date')
+              field: DATE_KEY
+              severity: warn
+      - name: IS_OUT_OF_STOCK
+        tests:
+          - accepted_values:
+              values: [0, 1]
+      - name: IS_LOW_STOCK
+        tests:
+          - accepted_values:
+              values: [0, 1]

@@ -1,0 +1,127 @@
+version: 2
+
+models:
+  - name: hub_product
+    description: "Data Vault Hub - unique product business keys"
+    columns:
+      - name: PRODUCT_HK
+        description: "Hash key - MD5 of PRODUCT_ID"
+        tests:
+          - not_null
+          - unique
+      - name: PRODUCT_BK
+        description: "Business key - original PRODUCT_ID"
+        tests:
+          - not_null
+          - unique
+      - name: LOAD_DATE
+        tests:
+          - not_null
+      - name: RECORD_SOURCE
+        tests:
+          - not_null
+
+  - name: hub_customer
+    description: "Data Vault Hub - unique customer business keys"
+    columns:
+      - name: CUSTOMER_HK
+        description: "Hash key - MD5 of CUSTOMER_ID"
+        tests:
+          - not_null
+          - unique
+      - name: CUSTOMER_BK
+        description: "Business key - original CUSTOMER_ID"
+        tests:
+          - not_null
+          - unique
+      - name: LOAD_DATE
+        tests:
+          - not_null
+      - name: RECORD_SOURCE
+        tests:
+          - not_null
+
+  - name: hub_order
+    description: "Data Vault Hub - unique order business keys"
+    columns:
+      - name: ORDER_HK
+        description: "Hash key - MD5 of ORDER_ID"
+        tests:
+          - not_null
+          - unique
+      - name: ORDER_BK
+        description: "Business key - original ORDER_ID"
+        tests:
+          - not_null
+          - unique
+      - name: LOAD_DATE
+        tests:
+          - not_null
+      - name: RECORD_SOURCE
+        tests:
+          - not_null
+
+  - name: sat_product_details
+    description: "Data Vault Satellite - product attribute history"
+    columns:
+      - name: PRODUCT_HK
+        tests:
+          - not_null
+          - relationships:
+              to: ref('hub_product')
+              field: PRODUCT_HK
+      - name: HASH_DIFF
+        description: "MD5 of tracked columns - used to detect changes"
+        tests:
+          - not_null
+      - name: LOAD_DATE
+        tests:
+          - not_null
+      - name: PRICE
+        tests:
+          - dbt_utils.accepted_range:
+              min_value: 0
+              inclusive: false
+
+  - name: sat_customer_details
+    description: "Data Vault Satellite - customer attribute history"
+    columns:
+      - name: CUSTOMER_HK
+        tests:
+          - not_null
+          - relationships:
+              to: ref('hub_customer')
+              field: CUSTOMER_HK
+      - name: HASH_DIFF
+        tests:
+          - not_null
+      - name: LOAD_DATE
+        tests:
+          - not_null
+      - name: EMAIL
+        tests:
+          - not_null
+
+  - name: lnk_order_product
+    description: "Data Vault Link - relationship between orders and products"
+    columns:
+      - name: ORDER_PRODUCT_HK
+        description: "Hash key - composite of ORDER_HK + PRODUCT_HK"
+        tests:
+          - not_null
+          - unique
+      - name: ORDER_HK
+        tests:
+          - not_null
+          - relationships:
+              to: ref('hub_order')
+              field: ORDER_HK
+      - name: PRODUCT_HK
+        tests:
+          - not_null
+          - relationships:
+              to: ref('hub_product')
+              field: PRODUCT_HK
+      - name: LOAD_DATE
+        tests:
+          - not_null
