@@ -1,9 +1,11 @@
 from airflow.decorators import dag, task
 from airflow.providers.snowflake.hooks.snowflake import SnowflakeHook
-from datetime import datetime, timedelta
 import requests, json, uuid
 from faker import Faker
 import random
+import pendulum
+from datetime import datetime
+from datetime import timedelta
 
 fake = Faker()
 
@@ -11,8 +13,8 @@ default_args = {'owner': 'data_eng', 'retries': 2,
                 'retry_delay': timedelta(minutes=5)}
 
 @dag(dag_id='ecomm_ingest',
-     schedule_interval='@daily',
-     start_date=datetime(2024, 1, 1),
+     schedule_interval='0 22 * * *',
+     start_date=pendulum.datetime(2024, 1, 1, tz='America/New_York'),
      default_args=default_args,
      catchup=False, tags=['ingestion', 'ecommerce'])
 def ingest_dag():
@@ -51,18 +53,34 @@ def ingest_dag():
 
     @task()
     def generate_orders():
-        orders = []
-        for _ in range(500):
-            orders.append({
+        historical = [
+            {
                 'order_id': str(uuid.uuid4()),
                 'customer_id': random.randint(1, 100),
-                'status': random.choice(['PENDING','SHIPPED',
-                                         'DELIVERED','CANCELLED']),
+                'product_id': random.randint(1, 100),
+                'status': random.choice(['PENDING','SHIPPED','DELIVERED','CANCELLED']),
                 'shipping_address': fake.address(),
-                'order_date': fake.date_between(
-                    start_date='-1y', end_date='today').isoformat(),
+                'order_date': fake.date_between(start_date='-1y', end_date='-1d').isoformat(),
                 'total_amount': round(random.uniform(20, 500), 2)
-            })
+            }
+            for _ in range(400)
+        ]
+
+        # 100 guaranteed today's orders — simulates daily operational load
+        todays = [
+            {
+                'order_id': str(uuid.uuid4()),
+                'customer_id': random.randint(1, 100),
+                'product_id': random.randint(1, 100),
+                'status': random.choice(['PENDING','SHIPPED','DELIVERED','CANCELLED']),
+                'shipping_address': fake.address(),
+                'order_date': datetime.today().date().isoformat(),
+                'total_amount': round(random.uniform(20, 500), 2)
+            }
+            for _ in range(100)
+        ]
+
+        orders = historical + todays
         hook = SnowflakeHook(snowflake_conn_id='snowflake_conn')
         hook.run("""
             CREATE TABLE IF NOT EXISTS RAW.RAW_ORDERS (
@@ -79,14 +97,26 @@ def ingest_dag():
     def generate_returns():
         # Returns trigger SCD changes on order status
         reasons = ['WRONG_SIZE','DAMAGED','NOT_AS_DESCRIBED','CHANGED_MIND']
-        returns = [{'return_id': str(uuid.uuid4()),
-                    'order_id': str(uuid.uuid4()),
-                    'customer_id': random.randint(1,100),
-                    'reason': random.choice(reasons),
-                    'return_date': fake.date_between(
-                        start_date='-6m', end_date='today').isoformat(),
-                    'refund_amount': round(random.uniform(10,300),2)}
-                   for _ in range(80)]
+        historical_returns = [{
+            'return_id': str(uuid.uuid4()),
+            'order_id': str(uuid.uuid4()),
+            'customer_id': random.randint(1,100),
+            'reason': random.choice(reasons),
+            'return_date': fake.date_between(start_date='-6m', end_date='-1d').isoformat(),
+            'refund_amount': round(random.uniform(10,300),2)}
+            for _ in range(60)
+        ]
+        todays_returns = [{
+            'return_id': str(uuid.uuid4()),
+            'order_id': str(uuid.uuid4()),
+            'customer_id': random.randint(1,100),
+            'reason': random.choice(reasons),
+            'return_date': datetime.today().date().isoformat(),
+            'refund_amount': round(random.uniform(10,300),2)}
+            for _ in range(20)
+        ]
+
+        returns = historical_returns + todays_returns
         hook = SnowflakeHook(snowflake_conn_id='snowflake_conn')
         hook.run("""
             CREATE TABLE IF NOT EXISTS RAW.RAW_RETURNS (
