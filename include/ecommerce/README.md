@@ -1,45 +1,33 @@
+## dbt implementation
+
 This dbt project transforms raw VARIANT JSON from Snowflake into analytics-ready tables through a four-layer medallion architecture. The modeling approach progresses from simple cleaning (staging) through auditable history (Data Vault 2.0) to consumer-facing analytics (star schema + OBT).
 
-## Layer Architecture
 
-```
-RAW (VARIANT JSON)
- │
- ▼
-STAGING — 4 views                    Flatten JSON, cast types, deduplicate
- │
- ▼
-VAULT — 3 hubs, 2 sats, 1 link      Insert-only, hash-keyed, change-detected
- │
- ▼
-SNAPSHOTS — 1 SCD Type 2             Track customer attribute changes over time
- │
- ▼
-MARTS — 3 dims, 3 facts, 1 OBT      Star schema + wide denormalized analytics table
-```
+## Lineage (dbt docs)
+![obt lineage](../../images/lineage.jpeg)
 
 ## Model Inventory
 
-### Staging (`models/staging/`) — Materialized as views
+### Staging (models/staging/) — Materialized as views
 
-Each staging model reads from a single RAW source table, extracts fields from Snowflake VARIANT JSON using path notation (`RAW_DATA:field::TYPE`), and deduplicates using `ROW_NUMBER() OVER (PARTITION BY pk ORDER BY INGESTED_AT DESC)`.
+Each staging model reads from a single RAW source table, extracts fields from Snowflake VARIANT JSON using path notation (RAW_DATA:field::TYPE), and deduplicates using ROW_NUMBER() OVER (PARTITION BY pk ORDER BY INGESTED_AT DESC).
 
-### Vault (`models/vault/`) — Materialized as incremental tables
+### Vault (models/vault/) — Materialized as incremental tables
 
-Implements Data Vault 2.0 with MD5 hash keys. Each model uses `is_incremental()` to insert only new records on subsequent runs.
+Implements Data Vault 2.0 with MD5 hash keys. Each model uses is_incremental() to insert only new records on subsequent runs.
 
 | Model | Type | Purpose |
 |---|---|---|
 | `hub_product` | Hub | Isolates product business key with load-date lineage |
 | `hub_customer` | Hub | Isolates customer business key |
 | `hub_order` | Hub | Isolates order business key (UUID) |
-| `sat_product_details` | Satellite | Tracks product attribute changes via `HASH_DIFF` on name + price + stock |
-| `sat_customer_details` | Satellite | Tracks customer attribute changes via `HASH_DIFF` on email + phone + address |
+| `sat_product_details` | Satellite | Tracks product attribute changes via HASH_DIFF on name + price + stock |
+| `sat_customer_details` | Satellite | Tracks customer attribute changes via HASH_DIFF on email + phone + address |
 | `lnk_order_product` | Link | Captures the order-to-product relationship as a composite hash key |
 
-**Change detection:** Satellites use `MD5(CONCAT(...))` as a `HASH_DIFF` column. On incremental runs, only records whose `HASH_DIFF` doesn't match any current (non-end-dated) satellite row are inserted. This means the vault accumulates a complete change history without duplicating unchanged records.
+**Change detection:** Satellites use MD5(CONCAT(...)) as a HASH_DIFF column. On incremental runs, only records whose HASH_DIFF doesn't match any current (non-end-dated) satellite row are inserted. This means the vault accumulates a complete change history without duplicating unchanged records.
 
-### Snapshots (`snapshots/`) — SCD Type 2
+### Snapshots (snapshots/) — SCD Type 2
 
 dbt automatically manages `DBT_VALID_FROM`, `DBT_VALID_TO`, `DBT_SCD_ID`, and `DBT_UPDATED_AT` columns. When a tracked column changes, the previous row gets an end-date and a new row is inserted with `DBT_VALID_TO = NULL` (current record).
 
