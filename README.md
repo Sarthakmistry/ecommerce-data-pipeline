@@ -1,6 +1,7 @@
 # E-Commerce Data Pipeline
 
-An end-to-end data platform that ingests product, order, customer, and inventory data from external APIs and synthetic generators, transforms it through a medallion architecture (RAW → Staging → Data Vault 2.0 → Star Schema), validates data quality at every layer, and delivers analytics-ready tables to Snowflake — all orchestrated by Airflow.
+An end-to-end data platform that ingests product, order, customer, and inventory data from external APIs, transforms it through a medallion architecture (RAW → Staging → Data Vault 2.0 → Star Schema), validates data quality at every layer, and delivers analytics-ready tables to Snowflake, all orchestrated by Airflow.
+
 ## Architecture
 
 ```
@@ -12,15 +13,15 @@ An end-to-end data platform that ingests product, order, customer, and inventory
 
 ## Key Components of pipeline
 
-**Data Modeling** — Four-layer medallion architecture progressing from raw VARIANT JSON through staging views, Data Vault 2.0 hubs/satellites/links, to a consumer-facing star schema. The final OBT (One Big Table) adds RFM customer segmentation, product performance tiers, MoM growth, rolling revenue windows, and running aggregates.
+**Data Modeling** — Four-layer medallion architecture progressing from raw VARIANT JSON through staging views, Data Vault 2.0 hubs/satellites/links, to a consumer-facing star schema. The final OBT (One Big Table) adds RFM customer segmentation, product performance tiers, MoM growth, rolling revenue windows, and running aggregates. Hubs isolate business keys, satellites track attribute history with hash-diff change detection, and links capture many-to-many relationships. Incremental materialization ensures only new or changed records are loaded on each run. dbt snapshots track customer attribute changes over time using a check strategy on email, address, and phone. The mart layer joins to the current snapshot for dimension tables. See [dbt implementation](include/ecommerce/)
 
 **Orchestration** — Two Airflow DAGs managed via Astro CLI and Astronomer Cosmos. The ingest DAG pulls live product and customer data and generates synthetic orders, returns, and inventory snapshots using Faker. The transform DAG sequences dbt model groups with Great Expectations checkpoints inserted between layers, so data quality is validated before downstream models consume upstream output.
+
 ![transform_dag](images/ecomm_tranform_dag.png)
-**Data Quality** — Great Expectations runs 50+ expectations across 7 suites covering schema validation, freshness checks, statistical distribution guards, and referential integrity. Failures don't halt the pipeline, they're logged to a Snowflake quarantine table with full GE metadata for triage, while the pipeline continues with warnings.
 
-**Data Vault 2.0** — Hubs isolate business keys, satellites track attribute history with hash-diff change detection, and links capture many-to-many relationships. Incremental materialization ensures only new or changed records are loaded on each run.
+**Data Quality** — Great Expectations runs 50+ expectations across 7 suites covering schema validation, freshness checks, statistical distribution guards, and referential integrity. Failures don't halt the pipeline, they're logged to a Snowflake quarantine table with full GE metadata for triage, while the pipeline continues with warnings. See [gx implementation](include/great_expectations/)
 
-**SCD Type 2** — dbt snapshots track customer attribute changes over time using a check strategy on email, address, and phone. The mart layer joins to the current snapshot for dimension tables.
+
 
 ## Tech Stack
 
@@ -105,9 +106,9 @@ astro dev run dags trigger ecomm_transform
 
 **Why Data Vault 2.0 as the integration layer?** A star schema is the right shape for analytics consumption, but loading directly from staging to star schema makes historical tracking and source auditability difficult. The vault layer provides a load-date-stamped, hash-keyed, insert-only audit trail that cleanly separates business keys (hubs) from descriptive attributes (satellites) from relationships (links). The marts layer then reads from the vault to build consumer-friendly dimensions and facts.
 
-**Why quarantine instead of hard-fail on data quality?** In a daily batch pipeline processing synthetic data, some quality issues (null brands from DummyJSON, VARIANT case sensitivity mismatches) are known source limitations, not pipeline bugs. Hard-failing would block the entire pipeline for expected issues. Instead, failures are routed to a quarantine table with full metadata — the pipeline continues, and the quarantine table serves as an audit log for triage.
+**Why quarantine instead of hard-fail on data quality?** In a daily batch pipeline processing data, some quality issues (null brands, VARIANT case sensitivity mismatches) are known source limitations, not pipeline bugs. Hard-failing would block the entire pipeline for expected issues. Instead, failures are routed to a quarantine table with full metadata — the pipeline continues, and the quarantine table serves as an audit log for triage.
 
 **Why Cosmos for dbt?** Running dbt as a single BashOperator in Airflow treats the entire dbt run as one opaque task. Cosmos renders each dbt model as an individual Airflow task, giving per-model visibility in the Airflow graph view, per-model retries, and the ability to insert non-dbt tasks (like GE checkpoints) between dbt model groups.
 
 
-**Why an isolated dbt virtualenv in Docker?** dbt and Airflow share Python dependencies, and version conflicts between dbt-snowflake's dependency tree and Airflow's providers are common. The Dockerfile creates a separate venv for dbt (`/usr/local/airflow/dbt_venv`) so the two environments don't interfere with each other. Cosmos's `VIRTUALENV` execution mode points to this path.
+**Why an isolated dbt virtualenv in Docker?** dbt and Airflow share Python dependencies, and version conflicts between dbt-snowflake's dependency tree and Airflow's providers are common. The Dockerfile creates a separate venv for dbt (/usr/local/airflow/dbt_venv) so the two environments don't interfere with each other. Cosmos's VIRTUALENV execution mode points to this path.
