@@ -18,3 +18,5 @@ include/great_expectations/gx/great_expectations.yml
 logs/
 plugins/
 tests/
+logs/
+packages.txt
