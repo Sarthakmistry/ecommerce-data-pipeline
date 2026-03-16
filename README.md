@@ -8,7 +8,7 @@ An end-to-end data platform that ingests product, order, customer, and inventory
   Transformation: dbt-snowflake 1.8.0 · Data Vault 2.0 → Star Schema
   Data Quality: Great Expectations 1.3.x · 2 checkpoints · 7 expectation suites
 ```
-![pipeline architecture](architecture.png)
+![pipeline architecture](images/architecture.png)
 
 ## Key Components of pipeline
 
