@@ -4,29 +4,7 @@ This module implements data quality validation across the pipeline using Great E
 
 ## How It Fits Into the Pipeline
 
-```
-dbt staging models
-       │
-       ▼
-┌─────────────────────┐
-│  staging_checkpoint  │◄── ge_validate_staging (Airflow PythonOperator)
-│  4 suites, ~25      │
-│  expectations        │──── failures ──► QUARANTINE table
-└─────────────────────┘
-       │ pass
-       ▼
-dbt vault → snapshots → marts
-       │
-       ▼
-┌─────────────────────┐
-│   marts_checkpoint   │◄── ge_validate_marts (Airflow PythonOperator)
-│  3 suites, ~30      │
-│  expectations        │──── failures ──► QUARANTINE table
-└─────────────────────┘
-       │ pass
-       ▼
-    Pipeline complete
-```
+![gx architecture](../../images/gx_arch.png)
 
 Great Expectations checkpoints are embedded directly into the Airflow transform DAG as `PythonOperator` tasks. They sit between dbt task groups — staging validation runs after staging models complete but before vault models begin, and marts validation runs after all marts models are built.
 
