@@ -15,7 +15,7 @@ An end-to-end data platform that ingests product, order, customer, and inventory
 **Data Modeling** — Four-layer medallion architecture progressing from raw VARIANT JSON through staging views, Data Vault 2.0 hubs/satellites/links, to a consumer-facing star schema. The final OBT (One Big Table) adds RFM customer segmentation, product performance tiers, MoM growth, rolling revenue windows, and running aggregates.
 
 **Orchestration** — Two Airflow DAGs managed via Astro CLI and Astronomer Cosmos. The ingest DAG pulls live product and customer data and generates synthetic orders, returns, and inventory snapshots using Faker. The transform DAG sequences dbt model groups with Great Expectations checkpoints inserted between layers, so data quality is validated before downstream models consume upstream output.
-
+![transform_dag](images/ecomm_tranform_dag.png)
 **Data Quality** — Great Expectations runs 50+ expectations across 7 suites covering schema validation, freshness checks, statistical distribution guards, and referential integrity. Failures don't halt the pipeline, they're logged to a Snowflake quarantine table with full GE metadata for triage, while the pipeline continues with warnings.
 
 **Data Vault 2.0** — Hubs isolate business keys, satellites track attribute history with hash-diff change detection, and links capture many-to-many relationships. Incremental materialization ensures only new or changed records are loaded on each run.
